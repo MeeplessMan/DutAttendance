@@ -7,9 +7,7 @@ from datetime import datetime
 import csv
 import mediapipe as mp
 
-# ----------------------------
-# Load known faces
-# ----------------------------
+
 path = 'known_faces'
 known_images = []
 known_names = []
@@ -25,7 +23,7 @@ for file_name in os.listdir(path):
     except Exception as e:
         print(f"Skipping file {file_name}: {e}")
 
-# Encode known faces
+
 known_encodings = []
 for img in known_images:
     encodings = face_recognition.face_encodings(img)
@@ -34,16 +32,12 @@ for img in known_images:
 
 print("Loaded known faces:", known_names)
 
-# ----------------------------
-# Setup MediaPipe Hands
-# ----------------------------
+
 mp_hands = mp.solutions.hands
 mp_draw = mp.solutions.drawing_utils
 hands = mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.5)
 
-# ----------------------------
-# Open webcam
-# ----------------------------
+
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("Error: Could not open webcam")
@@ -62,11 +56,11 @@ def classify_thumb(landmarks):
     Simple logic for thumbs up / thumbs down based on thumb tip and MCP landmarks.
     Returns 'up', 'down', or None
     """
-    # Thumb tip = landmark 4, Thumb MCP = landmark 2
+    
     tip_y = landmarks[4].y
     mcp_y = landmarks[2].y
 
-    # Check if other fingers are folded
+    
     fingers_folded = all(landmarks[i].y > landmarks[i - 2].y for i in [8, 12, 16, 20])
 
     if fingers_folded:
@@ -86,7 +80,7 @@ while True:
     rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
 
     if not face_detected:
-        # Detect faces
+        
         face_locations = face_recognition.face_locations(rgb_small_frame, model="hog")
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
         face_names = []
@@ -107,7 +101,7 @@ while True:
             print(f"Face detected: {person_name}")
 
     else:
-        # Detect hand gestures
+        
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         result = hands.process(rgb_frame)
         gesture = None
@@ -117,10 +111,10 @@ while True:
                 gesture = classify_thumb(hand_landmarks.landmark)
                 mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
                 if gesture:
-                    break  # Only check first detected hand
+                    break  
 
         if gesture == "up":
-            # Log attendance and exit
+            
             time_now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             with open('attendance.csv', mode='a', newline='') as file:
                 writer = csv.writer(file)
@@ -131,7 +125,7 @@ while True:
             print("Thumbs down detected, exiting without logging")
             break
 
-    # Optional: Draw face rectangles
+    
     if face_detected:
         for (top, right, bottom, left) in face_locations:
             top *= 4
@@ -147,3 +141,4 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+
