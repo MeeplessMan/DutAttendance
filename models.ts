@@ -65,6 +65,7 @@ export interface Attendance{
     eventId: number;//Foreign key to Event.id
     in: boolean;
     out: boolean;
+    userId: string;
 }
 
 enum status {
