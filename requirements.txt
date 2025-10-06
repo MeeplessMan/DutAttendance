@@ -1,0 +1,17 @@
+﻿# File: LastTry/requirements.txt (The correct and final version)
+
+# Web Server
+flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.1
+
+# Supabase Client (the correct one)
+supabase==2.18.1
+
+# Core Logic
+requests==2.32.5
+Pillow==10.0.0
+numpy==1.26.4
+opencv-python==4.8.1.78
+pytz
+# dlib is installed manually
